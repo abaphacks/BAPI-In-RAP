@@ -36,7 +36,7 @@ CLASS lsc_zi_0226_cc IMPLEMENTATION.
 *                                      profit_ctr = w_grp-ProfitCtr
                                             )
                                          ).
-        " call the bapi
+        " step - 3 call the bapi
         zcl_f_wrap_bapi_cc=>create_instance(  )->bapi_cc_create(
                   EXPORTING
                     controllingarea   = CONV kokrs( ls_grp-costctrhiergrp )
@@ -44,11 +44,11 @@ CLASS lsc_zi_0226_cc IMPLEMENTATION.
                     IMPORTING
                      ex_return         = DATA(lt_return)
                 ).
-        " msg type and text
+        " step - 4 msg type and text
         DELETE lt_return WHERE type = 'W'.
         DATA(lv_type) = VALUE #( lt_return[ 1 ]-type OPTIONAL ) .
         DATA(lv_text) = VALUE #( lt_return[ 1 ]-message OPTIONAL ) .
-        " let me create a internal table type zt0226_cc to fill the table
+        " step - 5  let me create a internal table type zt0226_cc to fill the table
         lt_cc_create = VALUE #( BASE lt_cc_create FOR w_grp IN create-costcenter
                                                                     WHERE (
                                                                          CostctrHierGrp = ls_grp-costctrhiergrp
@@ -70,6 +70,7 @@ CLASS lsc_zi_0226_cc IMPLEMENTATION.
                                                              ).
         CLEAR: lt_return.
       ENDLOOP.
+     " step - 6 Save Data
       INSERT zt0226_cc FROM TABLE @lt_cc_create.
 *      INSERT zt0226_cc FROM TABLE @create-costcenter  MAPPING FROM ENTITY.
     ENDIF.
@@ -266,5 +267,6 @@ CLASS lhc_CostCenter IMPLEMENTATION.
 
 
   ENDMETHOD.
+
 
 ENDCLASS.
