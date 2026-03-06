@@ -1,9 +1,3 @@
-CLASS zcl_f_wrap_bapi_cc IMPLEMENTATION.
-  METHOD create_instance.
-    result = NEW zcl_wrap_bapi_CC( destination = destination ).
-  ENDMETHOD.
-ENDCLASS.
-
 CLASS zcl_wrap_bapi_cc DEFINITION
   PUBLIC
   FINAL
@@ -67,4 +61,5 @@ CLASS zcl_wrap_bapi_cc IMPLEMENTATION.
         ex_return         = ex_return
     ).
   ENDMETHOD.
+
 ENDCLASS.
