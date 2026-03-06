@@ -1,0 +1,70 @@
+CLASS zcl_f_wrap_bapi_cc IMPLEMENTATION.
+  METHOD create_instance.
+    result = NEW zcl_wrap_bapi_CC( destination = destination ).
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS zcl_wrap_bapi_cc DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PRIVATE
+  GLOBAL FRIENDS zcl_f_wrap_bapi_cc.
+
+
+  PUBLIC SECTION.
+
+    INTERFACES zif_wrap_bapi_cc .
+
+  PROTECTED SECTION.
+    DATA: destination TYPE rfcdest .
+
+  PRIVATE SECTION.
+    METHODS call_bapi_cc_create
+      IMPORTING
+        controllingarea   TYPE bapi0012_gen-co_area
+        testrun           TYPE bapi0012_gen-testrun OPTIONAL
+        im_costcenterlist TYPE zif_wrap_bapi_cc~tt_cc_list
+      EXPORTING
+        ex_return         TYPE zif_wrap_bapi_cc~tt_return.
+
+    METHODS constructor
+      IMPORTING
+        !destination TYPE rfcdest .
+
+ENDCLASS.
+
+
+
+CLASS zcl_wrap_bapi_cc IMPLEMENTATION.
+
+
+  METHOD call_bapi_cc_create.
+  data(lt_cc_list) = im_costcenterlist.
+
+    CALL FUNCTION 'BAPI_COSTCENTER_CREATEMULTIPLE' DESTINATION me->destination
+      EXPORTING
+        controllingarea = controllingarea
+        testrun         = testrun
+      TABLES
+        costcenterlist  = lt_cc_list
+        return          = ex_return.
+
+  ENDMETHOD.
+
+
+  METHOD constructor.
+    me->destination = destination.
+  ENDMETHOD.
+
+
+  METHOD zif_wrap_bapi_cc~bapi_cc_create.
+    me->call_bapi_cc_create(
+      EXPORTING
+        controllingarea   = controllingarea
+        testrun           = testrun
+        im_costcenterlist = im_costcenterlist
+      IMPORTING
+        ex_return         = ex_return
+    ).
+  ENDMETHOD.
+ENDCLASS.
